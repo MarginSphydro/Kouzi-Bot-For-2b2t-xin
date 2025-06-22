@@ -1,0 +1,10 @@
+198.23.239.134:6540:jmjfghms:s81xiw7zpcel
+207.244.217.165:6712:jmjfghms:s81xiw7zpcel
+107.172.163.27:6543:jmjfghms:s81xiw7zpcel
+23.94.138.75:6349:jmjfghms:s81xiw7zpcel
+216.10.27.159:6837:jmjfghms:s81xiw7zpcel
+136.0.207.84:6661:jmjfghms:s81xiw7zpcel
+64.64.118.149:6732:jmjfghms:s81xiw7zpcel
+142.147.128.93:6593:jmjfghms:s81xiw7zpcel
+104.239.105.125:6655:jmjfghms:s81xiw7zpcel
+173.0.9.70:5653:jmjfghms:s81xiw7zpcel

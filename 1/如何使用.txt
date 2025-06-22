@@ -1,0 +1,4 @@
+by mark_7601
+在MinecraftClient.ini设置用户名
+在login.cs设置刷屏内容
+enjoy
