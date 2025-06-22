@@ -54,6 +54,7 @@ v2.1 2025/6/22
 what changed?
 
 
+
 I YouHua'ed the auto start
 
 which is called "opener.py"
@@ -78,7 +79,9 @@ it will be auto start 20 bots not 21 bots
 
 
 
+
 and the "Start_Bot.py" doesn't work as u see don't use this
+
 
 
 
@@ -92,11 +95,13 @@ if no username and password u just put ur ip:port and it will work as well
 
 
 
+
 and the AntiBlock_Username.py is for ShengCheng random chinese character usernames
 
 just for 2b2t.xin player in order to anti ignore
 
 they have to waste about 20 seconds to ignore ur bots by click on name
+
 
 
 
@@ -115,6 +120,7 @@ A1hen是我性奴3
 ...
 
 Yi Ci Lei Tui
+
 
 
 
@@ -139,6 +145,7 @@ and go to https://www.juliangip.com/user/reg?inviteCode=1052412
 to get proxys (Need Money)
 
 if u didn't use my reference link u will be hacked lol
+
 
 
 
