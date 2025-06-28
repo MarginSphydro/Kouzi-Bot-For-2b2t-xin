@@ -8,23 +8,31 @@ public class CombinedBot : ChatBot
     private bool stopAll = false;
     private static Random rnd = new Random();
 
+    // 自动答题库：关键字 -> 答案文本
+    private static Dictionary<string, string> questionAnswers = new Dictionary<string, string>()
+    {
+        { "红石火把", "15" },
+        { "猪被闪电", "僵尸猪人" },
+        { "小箱子能", "27" },
+        { "开服年份", "2020" },
+        { "定位末地遗迹", "0" },
+        { "爬行者被闪电", "高压爬行者" },
+        { "大箱子能", "54" },
+        { "羊驼会主动", "不会" },
+        { "无限水", "3" },
+        { "挖掘速度最快", "金镐" },
+        { "凋灵死后", "下界之星" },
+        { "苦力怕的官方", "爬行者" },
+        { "南瓜的生长", "不需要" },
+        { "定位末地", "0" }
+    };
+
     private string[] allowedSenders = new string[]
     {
-        "mark_7601",
-        "xin队列垄断bot_总控制器",
-        "Ungskaer",
-        "Ernest_bear",
-        "CloudyNeko",
-        "CloudyNeko_2B2T",
-        "looksky2024",
-        "ERN雇佣兵",
-        "ERN雇佣兵01",
-        "Mouselog",
-        "平凡的章鱼在挖土",
-        "离线007",
-        "不嘻嘻",
-        "CuteCute_CN",
-        "南宋皖"
+        "mark_7601", "xin队列垄断bot_总控制器", "Ungskaer", "Ernest_bear",
+        "CloudyNeko", "CloudyNeko_2B2T", "looksky2024", "ERN雇佣兵",
+        "ERN雇佣兵01", "Mouselog", "平凡的章鱼在挖土", "离线007",
+        "不嘻嘻", "CuteCute_CN", "南宋皖"
     };
 
     private string[] insults = new string[]
@@ -2437,26 +2445,45 @@ public class CombinedBot : ChatBot
 
     public override void GetText(string line)
     {
+        // 去除色码
         string text = System.Text.RegularExpressions.Regex.Replace(line, "§.", "");
 
-        // 检查是否是允许的发言者
+        // 自动答题：匹配包含“选项”的行
+        if (text.Contains("选项"))
+        {
+            foreach (var kv in questionAnswers)
+            {
+                if (text.Contains(kv.Key))
+                {
+                    foreach (string opt in new[] { "A", "B", "C", "D" })
+                    {
+                        if (text.Contains(opt + "." + kv.Value))
+                        {
+                            // 发送小写字母
+                            SendText(opt.ToLower());
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 以下保留原有功能，不做改动
         bool isFromAllowedSender = false;
         string body = "";
-
         foreach (string sender in allowedSenders)
         {
             string prefix = $"<{sender}> ";
             if (text.StartsWith(prefix))
             {
-                body = text.Substring(prefix.Length).Trim();
                 isFromAllowedSender = true;
+                body = text.Substring(prefix.Length).Trim();
                 break;
             }
         }
-
         if (!isFromAllowedSender) return;
 
-        // 命令：stop
+        // stop
         if (body.Equals("stop", StringComparison.OrdinalIgnoreCase))
         {
             stopAll = true;
@@ -2464,11 +2491,11 @@ public class CombinedBot : ChatBot
             return;
         }
 
-        // 命令：SK ...
+        // SK
         if (body.StartsWith("SK ", StringComparison.OrdinalIgnoreCase))
         {
             string msg = body.Substring(3).Trim();
-            if (msg != "" && msg != lastHandledSK)
+            if (!string.IsNullOrEmpty(msg) && msg != lastHandledSK)
             {
                 lastHandledSK = msg;
                 SendText(msg + " [" + GenTag(4) + "]");
@@ -2476,107 +2503,90 @@ public class CombinedBot : ChatBot
             return;
         }
 
-        // 命令：att <target>
+        // att
         if (body.StartsWith("att ", StringComparison.OrdinalIgnoreCase))
         {
-            string tgt = body.Substring(4).Trim().Split(' ')[0];
+            string tgt = body.Substring(4).Split(' ')[0];
             stopAll = false;
-            new System.Threading.Thread(() =>
-            {
-                int count = 0;
-                while (!stopAll)
-                {
-                    string insult = insults[rnd.Next(insults.Length)];
-                    SendText(tgt + " " + insult + " [" + GenTag(4) + "]");
+            new Thread(() =>{
+                int count=0;
+                while(!stopAll){
+                    string insult=insults[rnd.Next(insults.Length)];
+                    SendText(tgt+" "+insult+" ["+GenTag(4)+"]");
                     count++;
-                    Thread.Sleep(count < 3 ? 1000 + rnd.Next(2000) : 3500);
+                    Thread.Sleep(count<3?1000+rnd.Next(2000):3500);
                 }
-            }) { IsBackground = true }.Start();
+            }){IsBackground=true}.Start();
             return;
         }
 
-        // 命令：attsimp <msg>
-        if (body.StartsWith("attsimp ", StringComparison.OrdinalIgnoreCase))
+        // attsimp
+        if(body.StartsWith("attsimp ",StringComparison.OrdinalIgnoreCase))
         {
-            string msg = body.Substring(8).Trim();
-            if (msg != "")
-            {
-                stopAll = false;
-                new System.Threading.Thread(() =>
-                {
-                    int count = 0;
-                    while (!stopAll)
-                    {
-                        SendText(msg + " [" + GenTag(4) + "]");
+            string msg=body.Substring(8).Trim();
+            if(!string.IsNullOrEmpty(msg)){
+                stopAll=false;
+                new Thread(()=>{
+                    int count=0;
+                    while(!stopAll){
+                        SendText(msg+" ["+GenTag(4)+"]");
                         count++;
-                        Thread.Sleep(count < 3 ? 1000 + rnd.Next(2000) : 3500);
+                        Thread.Sleep(count<3?1000+rnd.Next(2000):3500);
                     }
-                }) { IsBackground = true }.Start();
+                }){IsBackground=true}.Start();
             }
             return;
         }
 
-        // 命令：attmsg <target>
-        if (body.StartsWith("attmsg ", StringComparison.OrdinalIgnoreCase))
+        // attmsg
+        if(body.StartsWith("attmsg ",StringComparison.OrdinalIgnoreCase))
         {
-            string tgt = body.Substring(7).Trim().Split(' ')[0];
-            stopAll = false;
-            new System.Threading.Thread(() =>
-            {
-                while (!stopAll)
-                {
-                    string insult = insults[rnd.Next(insults.Length)];
-                    SendText("/tell " + tgt + " " + insult + " [" + GenTag(4) + "]");
+            string tgt=body.Substring(7).Split(' ')[0];
+            stopAll=false;
+            new Thread(()=>{
+                while(!stopAll){
+                    string insult=insults[rnd.Next(insults.Length)];
+                    SendText("/tell "+tgt+" "+insult+" ["+GenTag(4)+"]");
                     Thread.Sleep(1100);
                 }
-            }) { IsBackground = true }.Start();
+            }){IsBackground=true}.Start();
             return;
         }
 
-        // 命令：attmsgsimp <target> <msg>
-        if (body.StartsWith("attmsgsimp ", StringComparison.OrdinalIgnoreCase))
+        // attmsgsimp
+        if(body.StartsWith("attmsgsimp ",StringComparison.OrdinalIgnoreCase))
         {
-            string[] parts = body.Split(new char[] { ' ' }, 3);
-            if (parts.Length >= 3)
-            {
-                string tgt = parts[1];
-                string msg = parts[2];
-                stopAll = false;
-                new System.Threading.Thread(() =>
-                {
-                    while (!stopAll)
-                    {
-                        SendText("/tell " + tgt + " " + msg + " [" + GenTag(4) + "]");
+            var parts=body.Split(new char[]{' '},3);
+            if(parts.Length>=3){
+                string tgt=parts[1];string msg=parts[2];
+                stopAll=false;
+                new Thread(()=>{
+                    while(!stopAll){
+                        SendText("/tell "+tgt+" "+msg+" ["+GenTag(4)+"]");
                         Thread.Sleep(1100);
                     }
-                }) { IsBackground = true }.Start();
+                }){IsBackground=true}.Start();
             }
             return;
         }
 
-        // 命令：chat <N>
-        if (body.StartsWith("chat ", StringComparison.OrdinalIgnoreCase))
+        // chat
+        if(body.StartsWith("chat ",StringComparison.OrdinalIgnoreCase))
         {
-            if (int.TryParse(body.Substring(5).Trim(), out int length) && length > 0)
-            {
-                stopAll = false;
-                new System.Threading.Thread(() =>
-                {
-                    while (!stopAll)
-                    {
-                        string randomChinese = GenChineseString(length);
-                        SendText($"/chat {randomChinese}");
+            if(int.TryParse(body.Substring(5).Trim(),out int length)&&length>0){
+                stopAll=false;
+                new Thread(()=>{
+                    while(!stopAll){
+                        SendText("/chat "+GenChineseString(length));
                         Thread.Sleep(1150);
                     }
-                })
-                { IsBackground = true }.Start();
+                }){IsBackground=true}.Start();
             }
             return;
         }
 
-        // 命令：chatlist
-        if (body.Equals("chatlist", StringComparison.OrdinalIgnoreCase))
-        {
+        // chatlist
+        if(body.Equals("chatlist",StringComparison.OrdinalIgnoreCase)){
             SendText("/sc list");
             return;
         }
@@ -2584,23 +2594,16 @@ public class CombinedBot : ChatBot
 
     private string GenTag(int len)
     {
-        string s = "";
-        string chs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        for (int i = 0; i < len; i++)
-            s += chs[rnd.Next(chs.Length)];
+        const string chs="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var s="";
+        for(int i=0;i<len;i++)s+=chs[rnd.Next(chs.Length)];
         return s;
     }
 
     private string GenChineseString(int len)
     {
-        // 生成指定长度的随机中文字符串
-        var sb = new System.Text.StringBuilder(len);
-        for (int i = 0; i < len; i++)
-        {
-            // 随机选取常用汉字范围 U+4E00 – U+9FFF
-            char ch = (char)rnd.Next(0x4E00, 0x9FFF);
-            sb.Append(ch);
-        }
+        var sb=new System.Text.StringBuilder(len);
+        for(int i=0;i<len;i++)sb.Append((char)rnd.Next(0x4E00,0x9FFF));
         return sb.ToString();
     }
 }
