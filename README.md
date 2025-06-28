@@ -9,7 +9,7 @@
 
 ## 下载方式
 
-由于 GitHub 单文件限制（25MB），请在 [Releases 页面](https://github.com/MCCTeam/Minecraft-Console-Client/releases) 下载完整压缩包。
+由于 GitHub 单文件限制（25MB），请在 [Releases 页面](https://github.com/MarginSphydro/Kouzi-Bot-For-2b2t-xin/releases) 下载完整压缩包。
 
 ---
 
