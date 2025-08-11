@@ -2433,13 +2433,13 @@ public class CombinedBot : ChatBot
 
     public override void Initialize()
     {
-        Thread.Sleep(5000);
+        Thread.Sleep(1000);
         SendText("/register nimabi nimabi");
-        Thread.Sleep(5000);
+        Thread.Sleep(1000);
         SendText("/login nimabi");
-        Thread.Sleep(5000);
+        Thread.Sleep(1000);
         PerformInternalCommand("changeslot 3");
-        Thread.Sleep(5000);
+        Thread.Sleep(1000);
         PerformInternalCommand("useitem");
     }
 
@@ -2607,3 +2607,4 @@ public class CombinedBot : ChatBot
         return sb.ToString();
     }
 }
+
